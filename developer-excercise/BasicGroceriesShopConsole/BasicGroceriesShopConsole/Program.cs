@@ -92,12 +92,13 @@ namespace BasicGroceriesShopConsole
 
             for (int i = 0; i < listedProducts.Count - 1; i++)
             {
-                for (int k = i + 1; k < listedProducts.Count - i; k++)
+                for (int k = i + 1; k <= listedProducts.Count - 1; k++)
                 {
                     if (listedProducts[i] == listedProducts[k])
                     {
                         bill = bill - listedProducts[i].Price * 0.5m;
-                        i++;
+                        listedProducts.Remove(listedProducts[k]);
+                       break;
                     }
                 }
             }
