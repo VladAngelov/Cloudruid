@@ -9,57 +9,124 @@ namespace BasicGroceriesShopConsole
     {
         static void Main()
         {
-            Product apple = new Product() { Name = "apple", Price = 50m };
-            Product banana = new Product() { Name = "banana", Price = 40m };
-            Product tomato = new Product() { Name = "tomato", Price = 30m };
-            Product potato = new Product() { Name = "potato", Price = 26m };
+            Console.WriteLine($"{Constants.GREETING}");
+            Console.WriteLine($"{Constants.ADMIN_INFO}");
+            Console.WriteLine($"{Constants.SHOPPING}");
+            Console.Write($"{Constants.CONTROL_TYPE}");
 
-            List<Product> products = new List<Product>()
+            List<Product> allProducts = new List<Product>();
+
+            string userControl = Console.ReadLine().ToLower();
+
+            bool run = true;
+
+            while (run)
             {
-                apple,  banana,
-                tomato, potato
-            };
+                switch (userControl)
+                {
+                    case "admin":
+                        allProducts = AddingProducts(allProducts); 
+                        Console.Write($"{Constants.CONTROL_TYPE}");
+                        userControl = Console.ReadLine().ToLower();
+                        break;
+                    case "shopping":
+                        Console.WriteLine(Shopping(allProducts));
+                        run = false;
+                        break;
+                    default:
+                        Console.Write($"{Constants.ERROR}");
+                        run = false;
+                        break;
+                }
+            }
+        }
 
-            StringBuilder sb = new StringBuilder();
+        private static List<Product> AddingProducts(List<Product> allProducts)
+        {
+            Console.WriteLine($"{Constants.ADD_PRODUCT_INFO}");
 
-            foreach (var product in products)
+            string[] productToAdd = Console.ReadLine()
+                .Split(", ", StringSplitOptions.RemoveEmptyEntries);
+
+            while (productToAdd[0] != "done")
             {
-                string name = product.Name;
+                if (!String.IsNullOrEmpty(productToAdd[1]) &&
+                    int.TryParse(productToAdd[0], out int price))
+                {
+                    Product product = new Product()
+                    {
+                        Name = productToAdd[1],
+                        Price = price
+                    };
 
-                sb.Append(name + ", ");
+                    if (!allProducts.Contains(product))
+                    {
+                        allProducts.Add(product);
+
+                        Console.WriteLine($"{Constants.ADD_PRODUCT_SUCCESS}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{Constants.ALREADY_ADDED_PRODUCT}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"{Constants.ERROR}");
+                }
+
+                productToAdd = Console.ReadLine()
+                .Split(", ", StringSplitOptions.RemoveEmptyEntries);
             }
 
-            Console.WriteLine("Select product from: " + sb.ToString().TrimEnd());
-            Console.WriteLine("To finish the order select: bill");
+            return allProducts;
+        }
+
+        private static string Shopping(List<Product> allProducts)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            List<string> productNames = new List<string>();
+
+            foreach (var product in allProducts)
+            {
+                string name = product.Name;
+                productNames.Add(name);
+            }
+
+            string products = String.Join(',', allProducts.Select(x => x.Name));
+
+            Console.WriteLine($"{Constants.SELECT_PRODUCT} {products}");
+            Console.WriteLine($"{Constants.FINISHING_ORDER}");
 
             string input = Console.ReadLine().ToLower();
 
             List<Product> listedProducts = new List<Product>();
 
-            while (input != "bill")
+            while (true)
             {
-                switch (input)
+                if (input == "bill")
                 {
-                    case "apple":
-                        listedProducts.Add(apple);
-                        break;
-                    case "banana":
-                        listedProducts.Add(banana);
-                        break;
-                    case "tomato":
-                        listedProducts.Add(tomato);
-                        break;
-                    case "potato":
-                        listedProducts.Add(potato);
-                        break;
-                    default:
-                        break;
+                    return Bill(listedProducts);
                 }
+                else
+                {
+                    if (productNames.Contains(input))
+                    {
+                        Product product = allProducts
+                            .Where(x => x.Name == input)
+                            .FirstOrDefault();
 
-                input = Console.ReadLine().ToLower();
+                        listedProducts.Add(product);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{Constants.MISSING} {input}");
+                    }
+
+                    input = Console.ReadLine().ToLower();
+                }
             }
-
-            Console.WriteLine(Bill(listedProducts));
         }
 
         private static string Bill(List<Product> listedProducts)
@@ -98,7 +165,7 @@ namespace BasicGroceriesShopConsole
                     {
                         bill = bill - listedProducts[i].Price * 0.5m;
                         listedProducts.Remove(listedProducts[k]);
-                       break;
+                        break;
                     }
                 }
             }
@@ -109,14 +176,15 @@ namespace BasicGroceriesShopConsole
             {
                 int aws = (int)bill / 100;
 
-                int c = (int)bill % 100;
+                int clouds = (int)bill % 100;
 
-                result = $"{aws} aws and {c} clouds";
+                result = $"{aws} {Constants.BIG_VALUE} {clouds} {Constants.SMALL_VALUE}";
             }
             else
             {
                 int c = (int)bill % 100;
-                result = $"{c} clouds";
+
+                result = $"{c} {Constants.SMALL_VALUE}";
             }
 
             return result;
