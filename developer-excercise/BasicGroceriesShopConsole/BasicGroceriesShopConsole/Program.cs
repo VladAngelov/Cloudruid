@@ -46,9 +46,9 @@ namespace BasicGroceriesShopConsole
             Console.WriteLine($"{Constants.ADD_PRODUCT_INFO}");
 
             string[] productToAdd = Console.ReadLine()
-                .Split(", ", StringSplitOptions.RemoveEmptyEntries);
+                .Split(Constants.SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
 
-            while (productToAdd[0] != "done")
+            while (productToAdd[0] != $"{Constants.DONE}")
             {
                 if (!String.IsNullOrEmpty(productToAdd[1]) &&
                     int.TryParse(productToAdd[0], out int price))
@@ -76,7 +76,7 @@ namespace BasicGroceriesShopConsole
                 }
 
                 productToAdd = Console.ReadLine()
-                .Split(", ", StringSplitOptions.RemoveEmptyEntries);
+                .Split(Constants.SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
             }
 
             return allProducts;
@@ -94,7 +94,7 @@ namespace BasicGroceriesShopConsole
                 productNames.Add(name);
             }
 
-            string products = String.Join(',', allProducts.Select(x => x.Name));
+            string products = String.Join(Constants.SEPARATOR, allProducts.Select(x => x.Name));
 
             Console.WriteLine($"{Constants.SELECT_PRODUCT} {products}");
             Console.WriteLine($"{Constants.FINISHING_ORDER}");
@@ -150,7 +150,9 @@ namespace BasicGroceriesShopConsole
 
                 listedProducts.RemoveRange(0, 3);
 
-                decimal priceToTakeOff = products.Select(p => p.Price).Min();
+                decimal priceToTakeOff = products
+                    .Select(p => p.Price)
+                    .Min();
 
                 bill = bill - priceToTakeOff;
 

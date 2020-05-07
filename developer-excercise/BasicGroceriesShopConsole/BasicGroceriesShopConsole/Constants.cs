@@ -20,12 +20,16 @@
 
         public static string FINISHING_ORDER = "To finish the order select: bill";
 
-        public static string SELECT_PRODUCT = "Select product from:";
+        public static string SELECT_PRODUCT = "Select product separated by \"Enter\" from:";
 
         public static string MISSING = "Missing product -";
 
         public static string BIG_VALUE = "aws and";
 
         public static string SMALL_VALUE = "clouds";
+
+        public static string DONE = "done";
+
+        public static string SEPARATOR = ", ";
     }
 }
